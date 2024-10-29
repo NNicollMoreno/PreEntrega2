@@ -1,0 +1,42 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Real-Time Products</title>
+  </head>
+  <body>
+    <h1>Productos en Tiempo Real</h1>
+    <ul id="productList">
+      {{#each products}}
+        <li>{{this.title}} - ${{this.price}}</li>
+      {{/each}}
+    </ul>
+
+    <h2>Agregar Producto</h2>
+    <form id="productForm">
+      <input type="text" id="title" placeholder="Título" required />
+      <input type="text" id="description" placeholder="Descripción" required />
+      <input type="number" id="price" placeholder="Precio" required />
+      <input type="text" id="code" placeholder="Código" required />
+      <input type="number" id="stock" placeholder="Stock" required />
+      <input type="text" id="category" placeholder="Categoría" required />
+      <button type="submit">Agregar</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io(); socket.on('updateProductList', (products) => { const
+      productList = document.getElementById('productList');
+      productList.innerHTML = products.map(p => `<li>${p.title} -
+      $${p.price}</li>`).join(''); });
+      document.getElementById('productForm').addEventListener('submit', (event)
+      => { event.preventDefault(); const newProduct = { title:
+      document.getElementById('title').value, description:
+      document.getElementById('description').value, price:
+      parseFloat(document.getElementById('price').value), code:
+      document.getElementById('code').value, stock:
+      parseInt(document.getElementById('stock').value), category:
+      document.getElementById('category').value, }; socket.emit('newProduct',
+      newProduct); });
+    </script>
+  </body>
+</html>
